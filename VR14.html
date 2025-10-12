@@ -2,10 +2,42 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<title>VR14</title>
+<title>VR Sicilia Live</title>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<style>
+  body { margin:0; background:#000; display:flex; justify-content:center; align-items:center; height:100vh; }
+  video { width:100%; max-width:720px; border:none; }
+</style>
 </head>
-<body style="background:#000; color:#fff; text-align:center;">
-<h1>VR14</h1>
-<iframe src="https://www.vrsicilia.it/" width="720" height="480" frameborder="0" scrolling="no" allowfullscreen></iframe>
+<body>
+<video id="video" controls autoplay></video>
+
+<script>
+async function loadStream() {
+  try {
+    const res = await fetch("https://github.com/Maverik9233/digitale-terrestre/blob/main/extractor.php"); // 👈 cambia con il tuo dominio
+    const data = await res.json();
+    if (data.url) {
+      const video = document.getElementById('video');
+      if (Hls.isSupported()) {
+        const hls = new Hls();
+        hls.loadSource(data.url);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = data.url;
+        video.play();
+      }
+    } else {
+      console.error("Errore:", data.error);
+    }
+  } catch (err) {
+    console.error("Errore di rete:", err);
+  }
+}
+
+loadStream();
+setInterval(loadStream, 60 * 60 * 1000); // 🔁 aggiorna ogni ora
+</script>
 </body>
-</html
+</html>
