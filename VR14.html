@@ -15,7 +15,7 @@
 <script>
 async function loadStream() {
   try {
-    const res = await fetch("https://maverik1908.byethost7.com/extractor.php"); // 👈 cambia con il tuo dominio
+    const res = await fetch("https://maverik1908.byethost7.com/extractor.php?site=vrsicilia"); // 👈 cambia con il tuo dominio
     const data = await res.json();
     if (data.url) {
       const video = document.getElementById('video');
