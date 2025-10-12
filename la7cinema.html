@@ -2,10 +2,42 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<title>La 7 Cinema</title>
+<title>La7 Cinema</title>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<style>
+  body { margin:0; background:#000; display:flex; justify-content:center; align-items:center; height:100vh; }
+  video { width:100%; max-width:720px; border:none; }
+</style>
 </head>
-<body style="background:#000; color:#fff; text-align:center;">
-<h1>La 7 Cinema</h1>
-<iframe src="https://www.la7.it/live-la7cinema" width="720" height="480" frameborder="0" scrolling="no" allowfullscreen></iframe>
+<body>
+<video id="video" controls autoplay></video>
+
+<script>
+async function loadStream() {
+  try {
+    const res = await fetch("https://maverik1908.byethost7.com/extractor.php?site=la7cinema"); // 👈 cambia con il tuo dominio
+    const data = await res.json();
+    if (data.url) {
+      const video = document.getElementById('video');
+      if (Hls.isSupported()) {
+        const hls = new Hls();
+        hls.loadSource(data.url);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = data.url;
+        video.play();
+      }
+    } else {
+      console.error("Errore:", data.error);
+    }
+  } catch (err) {
+    console.error("Errore di rete:", err);
+  }
+}
+
+loadStream();
+setInterval(loadStream, 3 * 60 * 1000); // 🔁 aggiorna ogni 3 minuti
+</script>
 </body>
 </html>
