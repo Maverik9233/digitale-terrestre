@@ -2,29 +2,47 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>La7 Cinema</title>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <style>
-  body { background:#000; color:#fff; text-align:center; margin:0; padding:0; }
-  .player-container {
-    position: relative;
-    padding-top: 56.25%; /* proporzione 16:9 */
+  body {
+    background: #000;
+    color: #fff;
+    text-align: center;
+    margin: 0;
   }
-  iframe {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    border: 0;
+  h1 {
+    font-family: sans-serif;
+    font-size: 20px;
+    margin: 10px 0;
+  }
+  video {
+    width: 720px;
+    height: 480px;
+    border: none;
   }
 </style>
 </head>
 <body>
   <h1>La7 Cinema</h1>
-  <div class="player-container">
-    <iframe
-      src="https://player.www.la7.it/live-la7cinema&parent=maverik9233.github.io"
-      allowfullscreen>
-    </iframe>
-  </div>
+  <video id="video" controls autoplay></video>
+
+  <script>
+    const video = document.getElementById('video');
+    const videoSrc = 'https://d1aud3ze4v205y.cloudfront.net/HBBTV/LA7D/DASH/Live.mpd?Expires=1760644129&Signature=uIAgRVcPfFL9qu-L0KuxiC0YaqUnlYoEtrohzPaX1DlpXER47AyT01~021jcttglf~7mEzYN49oqZ-2zkY7lHqsZt9g38AFHVAf3JRBJEXsfJEzatBtS4fzWoObTy-gKG6Ykn1QgmNdKCeFnl2MPI446Hno2ipWmUArjq4owACr94nxZxoNPy4oGK6FSMaZyPpVbmwHM9Z9kuxlk3ACiaBBLs~bw9dAv8W3aJ4javCfTKbb8cbfyD9klbrDwW2IKwD-FGrbtdEN8Yf9tbCYQh9unl7Qq30U--0SO946X30Gl557oVedw9uJW9u95Aer8Q6o~6rRAQyq2-Ul~pNu2kQ__&Key-Pair-Id=KB3R7VEQE3QYQ'; // 👈 il tuo link m3u8
+
+    if (Hls.isSupported()) {
+      const hls = new Hls();
+      hls.loadSource(videoSrc);
+      hls.attachMedia(video);
+      hls.on(Hls.Events.MANIFEST_PARSED, function() {
+        video.play();
+      });
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      // Safari supporta HLS nativamente
+      video.src = videoSrc;
+      video.play();
+    }
+  </script>
 </body>
 </html>
