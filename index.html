@@ -51,7 +51,7 @@
       text-align: center;
       text-decoration: none;
       color: #fff;
-      transition: transform 0.2s, background 0.2s;
+      transition: transform 0.2s, background 0.2s, box-shadow 0.3s;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -60,6 +60,7 @@
     .card:hover {
       transform: scale(1.05);
       background: #333;
+      box-shadow: 0 0 10px rgba(255,255,255,0.2);
     }
     .card img {
       width: 100%;
@@ -70,6 +71,13 @@
     .card h2 {
       margin: 0;
       font-size: 1rem;
+    }
+    /* Messaggio "nessun risultato" */
+    #noResults {
+      text-align: center;
+      color: #aaa;
+      margin-top: 20px;
+      font-style: italic;
     }
   </style>
 </head>
@@ -84,7 +92,7 @@
         <option value="francia">Francia</option>
         <option value="spagna">Spagna</option>
         <option value="uk">UK</option>
-        <option value="germania">Gernania</option>
+        <option value="germania">Germania</option>
         <option value="svizzera">Svizzera</option>
         <option value="argentina">Argentina</option>
         <option value="brasile">Brasile</option>
@@ -286,16 +294,20 @@
 </a>
  </div>
 
+  <p id="noResults" style="display:none;">😕 Nessun canale trovato.</p>
+
   <script>
     const searchInput = document.getElementById('search');
     const countryFilter = document.getElementById('countryFilter');
     const genreFilter = document.getElementById('genreFilter');
     const cards = document.querySelectorAll('.card');
+    const noResultsMsg = document.getElementById('noResults');
 
     function filterChannels() {
       const searchText = searchInput.value.toLowerCase();
       const country = countryFilter.value;
       const genre = genreFilter.value;
+      let visibleCount = 0;
 
       cards.forEach(card => {
         const name = card.dataset.name.toLowerCase();
@@ -306,8 +318,16 @@
         const matchesCountry = country === 'all' || cardCountry === country;
         const matchesGenre = genre === 'all' || cardGenre === genre;
 
-        card.style.display = (matchesSearch && matchesCountry && matchesGenre) ? 'flex' : 'none';
+        if (matchesSearch && matchesCountry && matchesGenre) {
+          card.style.display = 'flex';
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
       });
+
+      // Mostra messaggio se nessun canale corrisponde
+      noResultsMsg.style.display = visibleCount === 0 ? 'block' : 'none';
     }
 
     searchInput.addEventListener('input', filterChannels);
