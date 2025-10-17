@@ -21,6 +21,23 @@
       font-size: 2rem;
       letter-spacing: 1px;
     }
+    /* Barra filtri */
+    .filters {
+      margin-top: 15px;
+    }
+    .filters input, .filters select {
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: none;
+      margin: 0 5px;
+      font-size: 0.9rem;
+      background: #222;
+      color: #fff;
+    }
+    .filters input::placeholder {
+      color: #aaa;
+    }
+
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -59,11 +76,27 @@
 <body>
   <header>
     <h1>📺 Benvenuto su Streaming Live DGTV</h1>
+    <div class="filters">
+      <input type="text" id="search" placeholder="Cerca per nome...">
+      <select id="countryFilter">
+        <option value="all">Tutte le nazioni</option>
+        <option value="italia">Italia</option>
+        <option value="francia">Francia</option>
+        <option value="spagna">Spagna</option>
+      </select>
+      <select id="genreFilter">
+        <option value="all">Tutti i generi</option>
+        <option value="sport">Sport</option>
+        <option value="intrattenimento">Intrattenimento</option>
+        <option value="news">News</option>
+        <option value="musica">Musica</option>
+      </select>
+    </div>
   </header>
 
-  <div class="grid">
+  <div class="grid" id="channelGrid">
     <!-- Rai 1 -->
-    <a href="Rai1.html" class="card">
+    <a href="Rai1.html" class="card" data-name="Rai 1 HD" data-country="italia" data-genre="intrattenimento">
       <img src="logos/Rai1.png" alt="Rai 1 HD">
       <h2>Rai 1 HD</h2>
     </a>
@@ -238,6 +271,35 @@
       <img src="logos/boingplus.png" alt="Boing Plus">
       <h2>Boing Plus</h2>
 </a>
-</div>
+ </div>
+
+  <script>
+    const searchInput = document.getElementById('search');
+    const countryFilter = document.getElementById('countryFilter');
+    const genreFilter = document.getElementById('genreFilter');
+    const cards = document.querySelectorAll('.card');
+
+    function filterChannels() {
+      const searchText = searchInput.value.toLowerCase();
+      const country = countryFilter.value;
+      const genre = genreFilter.value;
+
+      cards.forEach(card => {
+        const name = card.dataset.name.toLowerCase();
+        const cardCountry = card.dataset.country;
+        const cardGenre = card.dataset.genre;
+
+        const matchesSearch = name.includes(searchText);
+        const matchesCountry = country === 'all' || cardCountry === country;
+        const matchesGenre = genre === 'all' || cardGenre === genre;
+
+        card.style.display = (matchesSearch && matchesCountry && matchesGenre) ? 'flex' : 'none';
+      });
+    }
+
+    searchInput.addEventListener('input', filterChannels);
+    countryFilter.addEventListener('change', filterChannels);
+    genreFilter.addEventListener('change', filterChannels);
+  </script>
 </body>
 </html>
