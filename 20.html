@@ -1,42 +1,45 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <title>20 Mediaset</title>
-  <style>
-    body {
-      background: #000;
-      color: #fff;
-      text-align: center;
-      margin: 0;
-      font-family: sans-serif;
-    }
-    h1 {
-      margin: 10px 0;
-    }
-    iframe.player {
-      width: 720px;
-      height: 480px;
-      border: 0;
-    }
-    iframe.epg {
-      width: 720px;
-      height: 400px;
-      border: 1px solid #fff;
-      margin-top: 20px;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>20 Mediaset</title>
+<style>
+  body {
+    background: #000;
+    color: #fff;
+    text-align: center;
+    margin: 0;
+    font-family: sans-serif;
+  }
+  h1 {
+    margin: 10px 0;
+    font-size: 24px;
+  }
+  .video-container {
+    width: 720px;
+    height: 480px;
+    margin: 0 auto 20px auto;
+  }
+  iframe.epg {
+    width: 720px;
+    height: 400px;
+    border: 1px solid #fff;
+    margin-bottom: 20px;
+  }
+</style>
 </head>
 <body>
-  <h1>20 Mediaset</h1>
 
-  <!-- Player -->
-  <iframe class="player" src="https://lazzy.live/lv/it/10.php" frameborder="0" scrolling="no" allowfullscreen></iframe>
+<h1>20 Mediaset</h1>
 
-  <!-- Guida EPG -->
-  <h2>Guida TV</h2>
-  <iframe class="epg" src="https://www.mediasetplay.mediaset.it/20mediaset" frameborder="0" scrolling="no"></iframe>
+<!-- Player Video -->
+<div class="video-container">
+  <iframe src="https://lazzy.live/lv/it/10.php" width="720" height="480" frameborder="0" scrolling="no" allowfullscreen></iframe>
+</div>
+
+<!-- Guida EPG -->
+<h2>📅 Guida TV</h2>
+<iframe class="epg" src="https://raw.githubusercontent.com/doglover3920/EPGimport-Sources/main/rytec.channels.xml" frameborder="0" scrolling="yes"></iframe>
 
 </body>
 </html>
-
