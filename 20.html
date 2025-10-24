@@ -5,95 +5,54 @@
 <title>20 Mediaset</title>
 <style>
   body {
-    background: #000;
+    background-color: #000;
     color: #fff;
     text-align: center;
     margin: 0;
     font-family: Arial, sans-serif;
   }
   h1 {
-    margin: 15px 0;
+    margin: 10px 0;
   }
   iframe {
-    width: 720px;
-    height: 480px;
-    border: 0;
+    border: none;
   }
-  #epg {
-    margin: 30px auto;
-    width: 90%;
-    max-width: 800px;
-    background: #111;
-    border-collapse: collapse;
+  .player-container {
+    margin-bottom: 20px;
   }
-  #epg th, #epg td {
-    border: 1px solid #333;
-    padding: 8px;
-    text-align: left;
-  }
-  #epg th {
-    background: #222;
-    color: #fff;
-  }
-  #epg td {
-    color: #ccc;
+  .epg-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
   }
 </style>
 </head>
+
 <body>
   <h1>20 Mediaset</h1>
-  <iframe src="https://lazzy.live/lv/it/10.php" allowfullscreen></iframe>
 
-  <h2>Guida TV – Programmazione</h2>
-  <table id="epg">
-    <tr><th>Orario</th><th>Programma</th></tr>
-  </table>
+  <!-- STREAMING PLAYER -->
+  <div class="player-container">
+    <iframe 
+      src="https://lazzy.live/lv/it/10.php" 
+      width="720" 
+      height="480" 
+      frameborder="0" 
+      scrolling="no" 
+      allowfullscreen>
+    </iframe>
+  </div>
 
-<script>
-const xmlUrl = "https:\/\/www.superguidatv.it\/programmazione-canale\/oggi\/guida-programmi-tv-20\/443\/"; // <-- metti qui il link al tuo file XML
+  <!-- GUIDA TV (EPG) -->
+  <div class="epg-container">
+    <h2>📺 Guida TV Oggi - 20 Mediaset</h2>
+    <iframe 
+      src="https://www.superguidatv.it/programmazione-canale/oggi/guida-programmi-tv-20/443/" 
+      width="100%" 
+      height="600" 
+      style="border:none; background:#fff; color:#000;">
+    </iframe>
+  </div>
 
-fetch(xmlUrl)
-  .then(response => response.text())
-  .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
-  .then(data => {
-    const table = document.getElementById("epg");
-    const programmes = data.querySelectorAll("programme");
-    let count = 0;
-
-    programmes.forEach(p => {
-      const channel = p.getAttribute("channel") || "";
-      // cambia '20' se il nome del canale nel tuo XML è diverso
-      if (channel.toLowerCase().includes("20 Mediaset HD")) {
-        const start = p.getAttribute("start");
-        const time = start ? `${start.substr(8,2)}:${start.substr(10,2)}` : "--:--";
-        const title = p.querySelector("title")?.textContent || "Sconosciuto";
-
-        const row = table.insertRow();
-        row.insertCell(0).textContent = time;
-        row.insertCell(1).textContent = title;
-        count++;
-      }
-    });
-
-    if (count === 0) {
-      const row = table.insertRow();
-      const cell = row.insertCell(0);
-      cell.colSpan = 2;
-      cell.textContent = "Nessuna informazione EPG trovata per questo canale.";
-      cell.style.textAlign = "center";
-      cell.style.color = "#888";
-    }
-  })
-  .catch(err => {
-    console.error("Errore nel caricamento EPG:", err);
-    const table = document.getElementById("epg");
-    const row = table.insertRow();
-    const cell = row.insertCell(0);
-    cell.colSpan = 2;
-    cell.textContent = "Errore nel caricamento della guida TV.";
-    cell.style.textAlign = "center";
-    cell.style.color = "#888";
-  });
-</script>
 </body>
 </html>
