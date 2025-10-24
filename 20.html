@@ -9,80 +9,90 @@
     color: #fff;
     text-align: center;
     margin: 0;
-    font-family: sans-serif;
+    font-family: Arial, sans-serif;
   }
   h1 {
-    margin: 10px 0;
+    margin: 15px 0;
   }
   iframe {
     width: 720px;
     height: 480px;
     border: 0;
   }
-  table {
-    margin: 20px auto;
-    border-collapse: collapse;
+  #epg {
+    margin: 30px auto;
     width: 90%;
     max-width: 800px;
     background: #111;
+    border-collapse: collapse;
   }
-  th, td {
+  #epg th, #epg td {
     border: 1px solid #333;
     padding: 8px;
     text-align: left;
   }
-  th {
+  #epg th {
     background: #222;
+    color: #fff;
+  }
+  #epg td {
+    color: #ccc;
   }
 </style>
 </head>
 <body>
-<h1>20 Mediaset</h1>
-<iframe src="https://lazzy.live/lv/it/10.php" frameborder="0" scrolling="no" allowfullscreen></iframe>
+  <h1>20 Mediaset</h1>
+  <iframe src="https://lazzy.live/lv/it/10.php" allowfullscreen></iframe>
 
-<h2>Guida TV</h2>
-<table id="epg-table">
-  <tr>
-    <th>Orario</th>
-    <th>Programma</th>
-  </tr>
-</table>
+  <h2>Guida TV – Programmazione</h2>
+  <table id="epg">
+    <tr><th>Orario</th><th>Programma</th></tr>
+  </table>
 
 <script>
-const xmlUrl = 'https://www.sorrisi.com/guidatv/canali-tv/20mediaset/'; // <- metti qui il link diretto
+const xmlUrl = "https://www.dropbox.com/scl/fi/2dkitji1azl7lb9bpcgkl/guide.xml?rlkey=bk2fi4gv3i2zyseetlll58mzi&st=982mr7rc&dl=1"; // <-- metti qui il link al tuo file XML
 
 fetch(xmlUrl)
   .then(response => response.text())
-  .then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
+  .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
   .then(data => {
-    const table = document.getElementById('epg-table');
-    const programs = data.querySelectorAll('programme');
+    const table = document.getElementById("epg");
+    const programmes = data.querySelectorAll("programme");
+    let count = 0;
 
-    programs.forEach(p => {
-      const channel = p.getAttribute('channel');
-      if(channel.toLowerCase().includes('20')) { // filtriamo solo 20 Mediaset
-        const start = p.getAttribute('start');
-        const hours = start.substr(8,2);
-        const minutes = start.substr(10,2);
-        const time = `${hours}:${minutes}`;
-        const titleNode = p.querySelector('title');
-        const title = titleNode ? titleNode.textContent : 'Sconosciuto';
+    programmes.forEach(p => {
+      const channel = p.getAttribute("channel") || "";
+      // cambia '20' se il nome del canale nel tuo XML è diverso
+      if (channel.toLowerCase().includes("20 Mediaset HD")) {
+        const start = p.getAttribute("start");
+        const time = start ? `${start.substr(8,2)}:${start.substr(10,2)}` : "--:--";
+        const title = p.querySelector("title")?.textContent || "Sconosciuto";
 
         const row = table.insertRow();
-        const cell1 = row.insertCell(0);
-        const cell2 = row.insertCell(1);
-        cell1.textContent = time;
-        cell2.textContent = title;
+        row.insertCell(0).textContent = time;
+        row.insertCell(1).textContent = title;
+        count++;
       }
     });
+
+    if (count === 0) {
+      const row = table.insertRow();
+      const cell = row.insertCell(0);
+      cell.colSpan = 2;
+      cell.textContent = "Nessuna informazione EPG trovata per questo canale.";
+      cell.style.textAlign = "center";
+      cell.style.color = "#888";
+    }
   })
   .catch(err => {
-    const table = document.getElementById('epg-table');
+    console.error("Errore nel caricamento EPG:", err);
+    const table = document.getElementById("epg");
     const row = table.insertRow();
     const cell = row.insertCell(0);
     cell.colSpan = 2;
-    cell.textContent = 'Errore caricamento EPG';
-    console.log('Errore EPG:', err);
+    cell.textContent = "Errore nel caricamento della guida TV.";
+    cell.style.textAlign = "center";
+    cell.style.color = "#888";
   });
 </script>
 </body>
