@@ -4,42 +4,52 @@
 <meta charset="UTF-8">
 <title>20 Mediaset</title>
 <style>
-  body {
-    background: #000;
-    color: #fff;
-    text-align: center;
-    margin: 0;
-    font-family: sans-serif;
-  }
-  h1 {
-    margin: 10px 0;
-    font-size: 24px;
-  }
-  .video-container {
-    width: 720px;
-    height: 480px;
-    margin: 0 auto 20px auto;
-  }
-  iframe.epg {
-    width: 720px;
-    height: 400px;
-    border: 1px solid #fff;
-    margin-bottom: 20px;
-  }
+  body { background:#000; color:#fff; text-align:center; font-family:sans-serif; margin:0; padding:0; }
+  h1 { margin: 10px 0; font-size:24px; }
+  .video-container { width:720px; height:480px; margin: 0 auto 20px auto; }
+  table { width:720px; margin: 0 auto; border-collapse: collapse; }
+  th, td { border:1px solid #fff; padding:5px; font-size:14px; }
+  th { background:#222; }
+  tr:nth-child(even) { background:#111; }
 </style>
 </head>
 <body>
 
 <h1>20 Mediaset</h1>
-
-<!-- Player Video -->
 <div class="video-container">
   <iframe src="https://lazzy.live/lv/it/10.php" width="720" height="480" frameborder="0" scrolling="no" allowfullscreen></iframe>
 </div>
 
-<!-- Guida EPG -->
 <h2>📅 Guida TV</h2>
-<iframe class="epg" src="20Mediaset.it" frameborder="0" scrolling="yes"></iframe>
+<table id="epg-table">
+  <tr>
+    <th>Orario</th>
+    <th>Programma</th>
+  </tr>
+</table>
+
+<script>
+  // URL del file XML su Dropbox (link pubblico)
+  const xmlUrl = 'https://www.dropbox.com/scl/fi/e4jx43royio6v1ov65nt0/epg.xml?rlkey=s3ewm1oph2ui5y1gkur1tm4wd&st=ijasonxt&dl=1';
+
+  fetch(xmlUrl)
+    .then(response => response.text())
+    .then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
+    .then(data => {
+      const table = document.getElementById('epg-table');
+      const programs = data.querySelectorAll('programme[channel="20"]'); // Canale 20
+      programs.forEach(p => {
+        const start = p.getAttribute('start').substring(8,12); // Ora e minuti
+        const title = p.querySelector('title') ? p.querySelector('title').textContent : '';
+        const row = table.insertRow();
+        const cell1 = row.insertCell(0);
+        const cell2 = row.insertCell(1);
+        cell1.textContent = start;
+        cell2.textContent = title;
+      });
+    })
+    .catch(err => console.log('Errore caricamento EPG:', err));
+</script>
 
 </body>
 </html>
