@@ -4,23 +4,43 @@
 <meta charset="UTF-8">
 <title>20 Mediaset</title>
 <style>
-  body { background:#000; color:#fff; text-align:center; font-family:sans-serif; margin:0; padding:0; }
-  h1 { margin: 10px 0; font-size:24px; }
-  .video-container { width:720px; height:480px; margin: 0 auto 20px auto; }
-  table { width:720px; margin: 0 auto; border-collapse: collapse; }
-  th, td { border:1px solid #fff; padding:5px; font-size:14px; }
-  th { background:#222; }
-  tr:nth-child(even) { background:#111; }
+  body {
+    background: #000;
+    color: #fff;
+    text-align: center;
+    margin: 0;
+    font-family: sans-serif;
+  }
+  h1 {
+    margin: 10px 0;
+  }
+  iframe {
+    width: 720px;
+    height: 480px;
+    border: 0;
+  }
+  table {
+    margin: 20px auto;
+    border-collapse: collapse;
+    width: 90%;
+    max-width: 800px;
+    background: #111;
+  }
+  th, td {
+    border: 1px solid #333;
+    padding: 8px;
+    text-align: left;
+  }
+  th {
+    background: #222;
+  }
 </style>
 </head>
 <body>
-
 <h1>20 Mediaset</h1>
-<div class="video-container">
-  <iframe src="https://lazzy.live/lv/it/10.php" width="720" height="480" frameborder="0" scrolling="no" allowfullscreen></iframe>
-</div>
+<iframe src="https://lazzy.live/lv/it/10.php" frameborder="0" scrolling="no" allowfullscreen></iframe>
 
-<h2>📅 Guida TV</h2>
+<h2>Guida TV</h2>
 <table id="epg-table">
   <tr>
     <th>Orario</th>
@@ -29,27 +49,41 @@
 </table>
 
 <script>
-  // URL del file XML su Dropbox (link pubblico)
-  const xmlUrl = 'https://www.dropbox.com/scl/fi/e4jx43royio6v1ov65nt0/epg.xml?rlkey=s3ewm1oph2ui5y1gkur1tm4wd&st=ijasonxt&dl=1';
+const xmlUrl = 'https://www.dropbox.com/s/XXXXXXXX/rytec.channels.xml?dl=1'; // <- metti qui il link diretto
 
-  fetch(xmlUrl)
-    .then(response => response.text())
-    .then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
-    .then(data => {
-      const table = document.getElementById('epg-table');
-      const programs = data.querySelectorAll('programme[channel="20"]'); // Canale 20
-      programs.forEach(p => {
-        const start = p.getAttribute('start').substring(8,12); // Ora e minuti
-        const title = p.querySelector('title') ? p.querySelector('title').textContent : '';
+fetch(xmlUrl)
+  .then(response => response.text())
+  .then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
+  .then(data => {
+    const table = document.getElementById('epg-table');
+    const programs = data.querySelectorAll('programme');
+
+    programs.forEach(p => {
+      const channel = p.getAttribute('channel');
+      if(channel.toLowerCase().includes('20')) { // filtriamo solo 20 Mediaset
+        const start = p.getAttribute('start');
+        const hours = start.substr(8,2);
+        const minutes = start.substr(10,2);
+        const time = `${hours}:${minutes}`;
+        const titleNode = p.querySelector('title');
+        const title = titleNode ? titleNode.textContent : 'Sconosciuto';
+
         const row = table.insertRow();
         const cell1 = row.insertCell(0);
         const cell2 = row.insertCell(1);
-        cell1.textContent = start;
+        cell1.textContent = time;
         cell2.textContent = title;
-      });
-    })
-    .catch(err => console.log('Errore caricamento EPG:', err));
+      }
+    });
+  })
+  .catch(err => {
+    const table = document.getElementById('epg-table');
+    const row = table.insertRow();
+    const cell = row.insertCell(0);
+    cell.colSpan = 2;
+    cell.textContent = 'Errore caricamento EPG';
+    console.log('Errore EPG:', err);
+  });
 </script>
-
 </body>
 </html>
